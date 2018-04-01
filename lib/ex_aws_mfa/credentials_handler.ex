@@ -1,31 +1,25 @@
 defmodule ExAwsMfa.CredentialsHandler do
-  alias ExAwsMfa.Commands.FetchCredentials
-  alias ExAwsMfa.Credentials
+  alias ExAwsMfa.Cache
+  alias ExAwsMfa.Commands.AwsStsAssumeRole
 
-  @expiration_period 3600
-
-  defmacro is_token_expired(credentials_path) do
-    quote do
-    end
-  end
-
-  def handle(credentials_path, config),
-    do: credentials(credentials_path, config) |> Credentials.decode!()
-
-  defp credentials(credentials_path, config) do
-    if token_expired?(credentials_path) do
-      FetchCredentials.build(config)
-      |> FetchCredentials.run()
+  def handle(config) do
+    if Cache.update?(config) do
+      fetch(config)
     else
-      {:ok, content} = File.read(credentials_file)
-
-      content
+      load(config)
     end
+    |> ExAwsMfa.Credentials.decode!()
   end
 
-  def token_expired?(credentials_path) do
-    {:ok, %{mtime: mtime}} = File.stat(credentials_path)
+  defp fetch(config) do
+    AwsStsAssumeRole.build(config)
+    |> AwsStsAssumeRole.run()
+    |> ExAwsMfa.Credentials.decode!()
+    |> ExAwsMfa.Credentials.encode!()
+    |> Cache.flush(config)
+  end
 
-    Timex.before?(mtime, Timex.shift(Timex.now(), seconds: @expiration_period))
+  defp load(config) do
+    Cache.load(config)
   end
 end

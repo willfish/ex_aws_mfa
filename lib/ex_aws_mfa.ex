@@ -1,30 +1,28 @@
 defmodule ExAwsMfa do
-  alias ExAwsMfa.Commands.WhichAws
-
   @moduledoc """
-  Documentation for ExAwsMfa.
+  ExAwsMfa is used to cache an sts session in your environment via a cache file.
   """
 
-  @doc """
-  """
-  # def handle(execution) when dependencies_met? do
-  #   parse_config
-  #   |> load_credentials
-  #   |> execute(execution)
-  # end
-
-  def execute(credentials, :set_and_exec) do
+  def main(argv) do
+    argv
+    |> execution_type
+    |> ExAwsMfa.Runner.run(argv)
   end
 
-  def execute(credentials, :quiet), do: nil
-
-  def execute(credentials, :set_env) do
+  def execution_type(argv) do
+    cond do
+      cache_only?(argv) -> :cache_only
+      print_env?(argv) -> :print_env
+      true -> :set_env_and_exec
+    end
   end
 
-  def execute(credentials, :print_env) do
+  defp cache_only?(argv) do
+    cache_only = fn arg -> arg == "--cache-only" end
+    Enum.any?(argv, cache_only)
   end
 
-  defp dependencies_met? do
-    WhichAws.run().success
+  defp print_env?(argv) do
+    Enum.empty?(argv)
   end
 end

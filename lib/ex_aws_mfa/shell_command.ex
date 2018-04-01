@@ -1,5 +1,5 @@
 defmodule ExAwsMfa.ShellCommand do
-  defstruct [:result, :status, :success]
+  defstruct [:result, :status, :success, :binary, :args]
 
   def execute(binary, args) do
     {result, status} = System.cmd(binary, args)
@@ -7,7 +7,9 @@ defmodule ExAwsMfa.ShellCommand do
     %ExAwsMfa.ShellCommand{
       result: result,
       status: status,
-      success: success?(status)
+      success: success?(status),
+      binary: binary,
+      args: args
     }
   end
 

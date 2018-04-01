@@ -1,11 +1,5 @@
-defmodule ExAwsMfaClient do
+defmodule ExAwsMfa.Ec2 do
   @hypervisor_file "/sys/hypervisor/uuid"
-
-  def execute(true, execution_output \\ :set_env, profile \\ nil) do
-    # AwsMfa.execute(execution_output, profile)
-  end
-
-  def execute(false, _, _), do: nil
 
   def ec2? do
     hypervisor_file?() && ec2_instance?()

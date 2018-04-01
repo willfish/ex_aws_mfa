@@ -2,49 +2,49 @@ defmodule ExAwsMfa.Commands.AwsStsAssumeRole do
   @binary "aws"
   @format "json"
   @mfa_regex ~r/^\d{6}$/
+  @prompt "Enter the 6-digit code from your MFA device:\n"
   @region "eu-west-1"
   @session_name "aws-mfa-session"
 
-  alias ExAwsMfa.ShellCommand
-
   def run({binary, args}) do
-    ShellCommand.execute(binary, args)
+    "#{binary} #{Enum.join(args, " ")}"
+    |> String.to_charlist()
+    |> :os.cmd()
   end
 
-  def build(token_code, profile_config) do
+  def build(config) do
     args = [
       "--profile",
-      profile_config.source_profile,
+      config.source_profile,
       "--region",
       @region,
       "--output",
       @format,
       "sts assume-role",
       "--role-arn",
-      profile_config.role_arn,
+      config.role_arn,
       "--role-session-name",
       @session_name,
       "--serial-number",
-      profile_config.serial_number,
+      config.mfa_serial,
       "--token-code",
-      prompt_for_code
+      prompt_for_code()
     ]
 
     {@binary, args}
   end
 
   defp prompt_for_code do
-    IO.puts("Enter the 6-digit code from your MFA device:")
-    code = IO.gets() |> String.chomp()
-
-    handle_code(code)
+    IO.gets(:stdio, @prompt)
+    |> String.trim()
+    |> handle_code()
   end
 
   defp handle_code(code) do
     if Regex.match?(@mfa_regex, code) do
       code
     else
-      raise "Invalid MFA Code: #{code}"
+      raise "Invalid MFA Code: #{code}\n"
     end
   end
 end
