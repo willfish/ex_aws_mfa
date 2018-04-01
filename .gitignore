@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # The directory Mix will write compiled artifacts to.
 /_build/
 
@@ -22,3 +23,11 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 ex_aws_mfa-*.tar
 
+=======
+/_build
+/cover
+/deps
+erl_crash.dump
+*.ez
+*.beam
+>>>>>>> fdaf36c47b8acfdf470341eb49862c8f3c0db660
