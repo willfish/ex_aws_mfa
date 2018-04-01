@@ -3,8 +3,8 @@
 Do you generate temporary credentials using AWS STS?
 
 This mix project enables you to conveniently wrap all your shell commands
-inside of a call to `ExAwsMfa` without the need to hard code environment
-variables with copy and paste or worry about expiring sessions.
+inside of a call to `ExAwsMfa` without the need for hard coding environment
+variables with copy and paste or inconvenient worries about expiring sessions.
 
 This is a port of the original AWS MFA gem found [here](https://github.com/lonelyplanet/aws-mfa/). The original repository is for a stand-alone shell script to prepare the environment to interact with AWS SDK tools. `ExAwsMfa` is both a stand-alone shell script and can also be inserted into an Elixir application to prepare the environment for a single instance. It retrieves temporary credentials for assuming an AWS role, by first obtaining an MFA token from the user.
 
