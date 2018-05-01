@@ -29,11 +29,14 @@ defmodule ExAwsMfa.Credentials do
   end
 
   def present(credentials) do
+    secret_access_key = Map.fetch!(credentials, :SecretAccessKey)
+    access_key_id = Map.fetch!(credentials, :AccessKeyId)
+    session_token = Map.fetch!(credentials, :SessionToken)
+
     """
-    export AWS_SECRET_ACCESS_KEY=#{credentials["SecretAccessKey"]}
-    export AWS_ACCESS_KEY_ID=#{credentials["AccessKeyId"]}
-    export AWS_SESSION_TOKEN=#{credentials["SessionToken"]}
-    export AWS_SECURITY_TOKEN=#{credentials["SessionToken"]}
+    export AWS_SECRET_ACCESS_KEY=#{secret_access_key}
+    export AWS_ACCESS_KEY_ID=#{access_key_id}
+    export AWS_SESSION_TOKEN=#{session_token}
     """
   end
 
