@@ -9,7 +9,7 @@ defmodule ExAwsMfa.Commands.AwsStsAssumeRole do
   def run({binary, args}) do
     "#{binary} #{Enum.join(args, " ")}"
     |> String.to_charlist()
-    |> :os.cmd()
+    |> Application.get_env(:ex_aws_mfa, :os).cmd()
   end
 
   def build(config) do
